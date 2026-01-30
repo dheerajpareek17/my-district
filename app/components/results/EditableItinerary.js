@@ -603,7 +603,7 @@ export default function EditableItinerary({
             return null;
           }
 
-          const apiKey = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImZjMDM0Yjc3M2QxZDQ1MzVhMzUzMjhmMzcwYWUyZmEzIiwiaCI6Im11cm11cjY0In0=';
+          const apiKey = process.env.OPENROUTE_API_KEY;
 
           return (
             <div className="w-[500px] flex-shrink-0">
