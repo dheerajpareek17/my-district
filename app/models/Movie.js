@@ -22,6 +22,7 @@ const MovieSchema = new mongoose.Schema({
 
   // Venue amenities
   address: String,
+  district_url: String,
   wifi: Boolean,
   washroom: Boolean,
   banner_url: String,
