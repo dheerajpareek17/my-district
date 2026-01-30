@@ -69,7 +69,9 @@ export default function ResultsPage() {
           alert(`✅ Successfully regenerated! Found ${result.totalCombinations} combinations, showing top ${result.itineraries.length}.`);
         }
       } else {
-        alert(`Error: ${result.error || 'Failed to regenerate itinerary'}`);
+        // Show detailed error message
+        const errorMsg = result.details || result.error || 'Failed to regenerate itinerary';
+        alert(`❌ ${errorMsg}`);
       }
     } catch (error) {
       console.error('Error regenerating:', error);

@@ -78,7 +78,9 @@ export default function PlanItinerary() {
         sessionStorage.setItem('originalRequest', JSON.stringify(apiPayload));
         router.push('/results');
       } else {
-        alert(`Error: ${result.error || 'Failed to generate itinerary'}`);
+        // Show detailed error message
+        const errorMsg = result.details || result.error || 'Failed to generate itinerary';
+        alert(`❌ ${errorMsg}`);
       }
     } catch (error) {
       console.error('Error:', error);

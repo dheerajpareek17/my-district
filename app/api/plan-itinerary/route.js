@@ -346,6 +346,20 @@ export async function POST(request) {
 
     console.log('📊 Final results summary:', results.map(r => `${r.type}: ${r.items.length} items`).join(', '));
 
+    // Check if any required types have no results
+    const emptyTypes = results.filter(r => r.items.length === 0);
+    if (emptyTypes.length > 0) {
+      const emptyTypeNames = emptyTypes.map(r => r.type).join(', ');
+      console.warn(`⚠️ No results found for: ${emptyTypeNames}`);
+      
+      return NextResponse.json({
+        success: false,
+        error: `No venues found for: ${emptyTypeNames}`,
+        details: `We couldn't find any ${emptyTypeNames} matching your criteria (budget, time, location, number of people). Please try adjusting your filters or constraints.`,
+        emptyTypes: emptyTypeNames
+      }, { status: 200 });
+    }
+
     // Generate all possible itinerary combinations with budget and time constraints
     const itineraries = generateItineraries(results, budget, numberOfPeople);
 
