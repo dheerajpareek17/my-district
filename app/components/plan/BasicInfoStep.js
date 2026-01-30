@@ -21,6 +21,7 @@ export default function BasicInfoStep({ formData, onNext }) {
   const [endLocationSuggestions, setEndLocationSuggestions] = useState([]);
   const [endLocationLoading, setEndLocationLoading] = useState(false);
   const [selectedEndLocation, setSelectedEndLocation] = useState('');
+  const [loadingEndCurrentLocation, setLoadingEndCurrentLocation] = useState(false);
 
   const validate = () => {
     const newErrors = {};
@@ -161,6 +162,50 @@ export default function BasicInfoStep({ formData, onNext }) {
       },
       (error) => {
         setLoadingCurrentLocation(false);
+        let errorMsg = 'Unable to retrieve your location';
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            errorMsg = 'Location permission denied. Please enable location access.';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMsg = 'Location information unavailable.';
+            break;
+          case error.TIMEOUT:
+            errorMsg = 'Location request timed out.';
+            break;
+        }
+        alert(errorMsg);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
+  };
+
+  // Use current location for end
+  const handleUseEndCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser');
+      return;
+    }
+
+    setLoadingEndCurrentLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocalData(prev => ({
+          ...prev,
+          endLocation: {
+            lat: position.coords.latitude.toFixed(6),
+            lng: position.coords.longitude.toFixed(6)
+          }
+        }));
+        setSelectedEndLocation('Current Location');
+        setLoadingEndCurrentLocation(false);
+      },
+      (error) => {
+        setLoadingEndCurrentLocation(false);
         let errorMsg = 'Unable to retrieve your location';
         switch(error.code) {
           case error.PERMISSION_DENIED:
@@ -436,6 +481,28 @@ export default function BasicInfoStep({ formData, onNext }) {
                       </div>
                     )}
                   </div>
+                )}
+
+                {/* Use Current Location button for end location */}
+                {!selectedEndLocation && (
+                  <button
+                    type="button"
+                    onClick={handleUseEndCurrentLocation}
+                    disabled={loadingEndCurrentLocation}
+                    className="mt-2 w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loadingEndCurrentLocation ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span className="text-sm font-medium">Getting location...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Navigation className="w-4 h-4" />
+                        <span className="text-sm font-medium">Use Current Location</span>
+                      </>
+                    )}
+                  </button>
                 )}
               </div>
 
