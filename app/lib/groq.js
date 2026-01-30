@@ -106,44 +106,47 @@ function buildSystemPrompt(requestBody) {
   
   return `You are a precise itinerary scoring engine. ${constraintsText}
 
-EVALUATION GUIDELINES:
+DYNAMIC WEIGHTING:
+  Analyze use preferences to determine priority. Allocate points (total = 100) across relevant criteria based on their importance to the user.
+- Budget-focused user: Allocate more weight to budget compliance (e.g., 40-50 points)
+- Travel-sensitive user: Allocate more weight to travel & logistics (e.g., 40-60 points)
+- Quality-focused user: Allocate more weight to ratings, preferences, and venue quality
+- If intent is unclear: Distribute points equally across criteria
 
-1. BUDGET COMPLIANCE (0-25 points):
-   - Calculate total cost vs budget (pricePerPerson × numberOfPeople for all items)
-   - Deduct points for exceeding budget
-   - Reward optimal use of budget without overspending
+KEY EVALUATION AREAS:
+1. BUDGET: Total cost vs budget (pricePerPerson × numberOfPeople). Penalize overspending.
 
-2. TRAVEL & LOGISTICS (0-25 points):
-   - Evaluate distanceKm and travelTimeMinutes between consecutive items
-   - If travelTolerance specified: penalize heavily if any leg exceeds limit
-   - Consider cumulative travel time impact on experience
-   - Check if timeGapBetweenThings is respected between go outs
-   - Validate go outs fit within venue operating hours (availableTimeStart to availableTimeEnd)
+2. TRAVEL & LOGISTICS: distanceKm, travelTimeMinutes between locations. Check travelTolerance limits, timeGapBetweenThings, and venue operating hours (availableTimeStart to availableTimeEnd).
 
-3. QUALITY & PREFERENCES (0-25 points):
-   - Check minimumRating compliance (rating field)
-   - Match extraInfo preferences with tags field
-   - Evaluate crowdTolerance alignment
-   - Verify parkingAccessible requirement if specified
-   - Assess type-specific filters (cuisines, venue, type, genre, etc.)
+3. GO-OUT SPECIFIC FILTERS (penalize mismatches):
+   - DINING: type (veg/non-veg), cuisines, alcohol availability
+   - EVENTS: type, venue (indoor/outdoor/both)
+   - ACTIVITIES: type, venue (indoor/outdoor), intensity (low/medium/high)
+   - PLAY: type (sport), venue (indoor/outdoor), intensity (low/medium/high), cafe availability
+   - MOVIES: genre, language, format (2D/3D/IMAX), cast
 
-4. EXPERIENCE FLOW (0-25 points):
-   - Logical sequence of go outs
-   - Variety and balance in the itinerary
-   - Duration appropriateness for each go out
-   - Overall coherence and quality of experience
+4. COMMON AMENITY FILTERS (penalize mismatches):
+   - wifi, washroom, wheelchair accessibility, parking availability
+   - rating (must meet minimum rating requirement)
+   - crowdTolerance (low/medium/high)
+
+5. USER PREFERENCES & QUALITY:
+   - Match extraInfo (user's free-text preferences) with venue description, tags, and overall experience quality
+   - Verify venues align with user's stated interests and requirements
+
+6. EXPERIENCE FLOW: Logical sequence, variety, balance, and duration appropriateness.
 
 SCORING RULES:
-- Use FULL granular range 0-100 (e.g., 67, 73, 82, 91)
+- Use full granular range 0-100 (e.g., 67, 73, 82, 91)
 - Do NOT round to multiples of 5 or 10
 - Be precise based on constraint violations/matches
-- Penalize each constraint violation proportionally
+- Penalize each violation proportionally
 
 OUTPUT FORMAT:
-Return ONLY valid JSON with this exact structure:
+Return ONLY valid JSON:
 {
   "score": <integer 0-100>,
-  "reasoning": "<detailed explanation of score with specific constraint analysis>"
+  "reasoning": "<detailed explanation with specific constraint analysis and weight distribution>"
 }`;
 }
 
