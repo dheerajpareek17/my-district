@@ -16,7 +16,7 @@ function buildSystemPrompt(requestBody) {
   
   // User preferences
   if (requestBody.extraInfo) {
-    constraints.push(`user preferences: "${requestBody.extraInfo}" (consider all venue details)`);
+    constraints.push(`user preferences: "${requestBody.extraInfo}" (match against venue name, description, type, cuisines, genre, and other attributes for scoring)`);
   }
   
   // Extract filters from preferredTypes array (new structure)
