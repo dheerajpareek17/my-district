@@ -78,7 +78,47 @@ function buildSystemPrompt(requestBody) {
     ? `Evaluate based on: ${constraints.join(', ')}.`
     : 'Evaluate all aspects.';
   
-  return `You are a scoring engine. ${constraintsText} Note: Each item has distanceKm and travelTimeMinutes from previous location. Return ONLY a single integer between 0 and 100. No explanation. No text.`;
+  return `You are a precise itinerary scoring engine. ${constraintsText}
+
+EVALUATION GUIDELINES:
+
+1. BUDGET COMPLIANCE (0-25 points):
+   - Calculate total cost vs budget (pricePerPerson × numberOfPeople for all items)
+   - Deduct points for exceeding budget
+   - Reward optimal use of budget without overspending
+
+2. TRAVEL & LOGISTICS (0-25 points):
+   - Evaluate distanceKm and travelTimeMinutes between consecutive items
+   - If travelTolerance specified: penalize heavily if any leg exceeds limit
+   - Consider cumulative travel time impact on experience
+   - Check if timeGapBetweenThings is respected between go outs
+   - Validate go outs fit within venue operating hours (availableTimeStart to availableTimeEnd)
+
+3. QUALITY & PREFERENCES (0-25 points):
+   - Check minimumRating compliance (rating field)
+   - Match extraInfo preferences with tags field
+   - Evaluate crowdTolerance alignment
+   - Verify parkingAccessible requirement if specified
+   - Assess type-specific filters (cuisines, venue, type, genre, etc.)
+
+4. EXPERIENCE FLOW (0-25 points):
+   - Logical sequence of go outs
+   - Variety and balance in the itinerary
+   - Duration appropriateness for each go out
+   - Overall coherence and quality of experience
+
+SCORING RULES:
+- Use FULL granular range 0-100 (e.g., 67, 73, 82, 91)
+- Do NOT round to multiples of 5 or 10
+- Be precise based on constraint violations/matches
+- Penalize each constraint violation proportionally
+
+OUTPUT FORMAT:
+Return ONLY valid JSON with this exact structure:
+{
+  "score": <integer 0-100>,
+  "reasoning": "<detailed explanation of score with specific constraint analysis>"
+}`;
 }
 
 /**
@@ -105,7 +145,7 @@ export async function scoreItinerary(itinerary, requestBody) {
           },
           {
             role: 'user',
-            content: `User Request:\n\`\`\`json\n${JSON.stringify(requestBody, null, 2)}\n\`\`\`\n\nPermutation:\n\`\`\`json\n${JSON.stringify(itinerary, null, 2)}\n\`\`\`\n\nScore this plan.`
+            content: `Itinerary:\n\`\`\`json\n${JSON.stringify(itinerary, null, 2)}\n\`\`\`\n\nScore this plan.`
           }
         ]
       })
@@ -117,16 +157,38 @@ export async function scoreItinerary(itinerary, requestBody) {
     }
 
     const data = await response.json();
-    const scoreText = data.choices[0]?.message?.content?.trim();
-    const score = parseInt(scoreText, 10);
+    const responseText = data.choices[0]?.message?.content?.trim();
+    
+    try {
+      // Parse JSON response
+      const result = JSON.parse(responseText);
+      const score = parseInt(result.score, 10);
+      const reasoning = result.reasoning || 'No reasoning provided';
 
-    if (isNaN(score) || score < 0 || score > 100) {
-      console.error('Invalid score from AI:', scoreText);
-      return 50;
+      if (isNaN(score) || score < 0 || score > 100) {
+        console.error('Invalid score from AI:', score);
+        return 50;
+      }
+
+      // Log the reasoning
+      console.log('AI Score:', score);
+      console.log('AI Reasoning:', reasoning);
+      
+      return score;
+      
+    } catch (parseError) {
+      // Fallback: try to extract score as plain integer if JSON parsing fails
+      console.warn('Failed to parse JSON response, trying plain integer extraction:', parseError.message);
+      const score = parseInt(responseText, 10);
+      
+      if (isNaN(score) || score < 0 || score > 100) {
+        console.error('Invalid score from AI:', responseText);
+        return 50;
+      }
+      
+      console.log('AI Score (fallback):', score);
+      return score;
     }
-
-    console.log('AI Score:', score);
-    return score;
 
   } catch (error) {
     console.error('Error scoring itinerary:', error);
