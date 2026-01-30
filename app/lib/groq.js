@@ -135,7 +135,7 @@ export async function scoreItinerary(itinerary, requestBody) {
         'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'openai/gpt-oss-120b',
+        model: process.env.GROQ_MODEL,
         temperature: 0,
         top_p: 1,
         messages: [
