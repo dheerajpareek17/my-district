@@ -378,13 +378,31 @@ export async function POST(request) {
     // Score itineraries using AI (batchSize=1 processes one at a time)
     const scoredItineraries = await scoreItineraries(validItineraries, body, 1);
     
-    // Get top 4 itineraries (already sorted highest to lowest by scoreItineraries)
-    const top4 = scoredItineraries.slice(0, 4);
+    // Remove duplicate itineraries (same venues in same order)
+    const uniqueItineraries = [];
+    const seenCombinations = new Set();
+    
+    for (const itinerary of scoredItineraries) {
+      // Create a unique key based on venue IDs/names in order
+      const key = itinerary.itinerary.map(item => {
+        const typeName = Object.keys(item)[0];
+        const venue = item[typeName];
+        return venue._id || venue.name || JSON.stringify(venue);
+      }).join('|');
+      
+      if (!seenCombinations.has(key)) {
+        seenCombinations.add(key);
+        uniqueItineraries.push(itinerary);
+      }
+    }
+    
+    // Get top 4 unique itineraries (already sorted highest to lowest by scoreItineraries)
+    const top4 = uniqueItineraries.slice(0, 4);
 
     return NextResponse.json({
       success: true,
       itineraries: top4,
-      totalCombinations: scoredItineraries.length
+      totalCombinations: uniqueItineraries.length
     }, { status: 200 });
 
   } catch (error) {

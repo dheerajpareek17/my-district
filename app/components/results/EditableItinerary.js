@@ -257,11 +257,16 @@ export default function EditableItinerary({
 
           if (isEditing) {
             return (
-              <div key={actIndex} className="p-4 bg-yellow-900 border-2 border-yellow-600 rounded-lg relative z-10 mx-auto max-w-4xl">
-                <div className="flex justify-end mb-4">
+              <div key={actIndex} className="p-6 bg-gradient-to-br from-purple-900/40 to-blue-900/40 backdrop-blur-sm border-2 border-purple-500/50 rounded-xl shadow-xl relative z-10 mx-auto max-w-4xl">
+                {/* Header with title and close button */}
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-bold text-purple-200 flex items-center gap-2">
+                    <Edit2 className="w-5 h-5" />
+                    {!selectedType ? 'Select Activity Type' : 'Configure Filters'}
+                  </h3>
                   <button
                     onClick={handleCancelEdit}
-                    className="text-gray-300 hover:text-gray-100"
+                    className="p-2 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-lg transition-all"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -269,45 +274,49 @@ export default function EditableItinerary({
 
                 {!selectedType ? (
                   <div>
+                    <p className="text-purple-300 text-sm mb-4 text-center">Choose what type of activity you'd like instead</p>
                     <div className="flex flex-wrap justify-center gap-3">
                       {GO_OUT_TYPES.map((type, idx) => (
                         <button
                           key={type.id}
                           onClick={() => handleTypeSelect(type.id)}
-                          className={`p-3 border-2 border-gray-600 hover:border-purple-500 hover:bg-purple-900 bg-gray-800 rounded-lg transition-all text-center ${
+                          className={`group p-4 border-2 border-purple-500/30 hover:border-purple-400 hover:bg-purple-800/50 bg-gray-800/50 rounded-xl transition-all text-center transform hover:scale-105 ${
                             idx < 3 ? 'w-[calc(33.333%-0.5rem)]' : 'w-[calc(33.333%-0.5rem)] md:w-auto'
                           }`}
                           style={idx >= 3 ? { minWidth: 'calc(33.333% - 0.5rem)' } : {}}
                         >
-                          <div className="text-2xl mb-1">{type.icon}</div>
-                          <div className="font-medium text-white text-sm">{type.name}</div>
+                          <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">{type.icon}</div>
+                          <div className="font-semibold text-purple-200 text-sm">{type.name}</div>
                         </button>
                       ))}
                     </div>
                   </div>
                 ) : (
                   <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-2xl">{getTypeIcon(selectedType)}</span>
-                      <span className="font-semibold text-white">
-                        {GO_OUT_TYPES.find(t => t.id === selectedType)?.name}
-                      </span>
+                    <div className="flex items-center gap-3 mb-4 p-3 bg-purple-900/30 rounded-lg border border-purple-500/30">
+                      <span className="text-3xl">{getTypeIcon(selectedType)}</span>
+                      <div>
+                        <span className="font-bold text-purple-200 text-lg">
+                          {GO_OUT_TYPES.find(t => t.id === selectedType)?.name}
+                        </span>
+                        <p className="text-purple-300 text-xs mt-1">Configure your preferences below</p>
+                      </div>
                     </div>
                     <GoOutFilters
                       type={selectedType}
                       filters={filters}
                       onUpdate={handleFilterUpdate}
                     />
-                    <div className="flex gap-3 mt-4">
+                    <div className="flex gap-3 mt-6">
                       <button
                         onClick={handleSaveEdit}
-                        className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                        className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-purple-500/50 transform hover:scale-[1.02]"
                       >
                         Save Changes
                       </button>
                       <button
                         onClick={handleCancelEdit}
-                        className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg transition-colors"
+                        className="px-6 py-3 bg-gray-700/50 hover:bg-gray-600/50 text-gray-200 font-semibold rounded-xl transition-all border border-gray-600 hover:border-gray-500"
                       >
                         Cancel
                       </button>
@@ -374,8 +383,9 @@ export default function EditableItinerary({
                   {/* Time Badge (if specific venue) OR Activity Type Name (if just filters) */}
                   <div className="flex-1">
                     {venue.name && !hasIncompleteActivityBefore ? (
-                      <div className="px-3 py-1 bg-purple-600 rounded-full inline-block">
-                        <span className="text-xs font-bold text-white">
+                      <div className="flex items-center gap-2 px-4 py-2 border-2 border-purple-500 rounded-lg inline-flex">
+                        <Clock className="w-4 h-4 text-purple-400" />
+                        <span className="text-sm font-bold text-purple-400">
                           {calculateTime(actIndex)}
                         </span>
                       </div>
@@ -487,11 +497,16 @@ export default function EditableItinerary({
   
           {/* Add New Activity Card */}
           {isAdding && (
-          <div className="p-4 bg-green-900 border-2 border-green-600 rounded-lg relative z-10 mx-auto max-w-4xl">
-            <div className="flex justify-end mb-4">
+          <div className="p-6 bg-gradient-to-br from-purple-900/40 to-blue-900/40 backdrop-blur-sm border-2 border-purple-500/50 rounded-xl shadow-xl relative z-10 mx-auto max-w-4xl">
+            {/* Header with title and close button */}
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-purple-200 flex items-center gap-2">
+                <Plus className="w-5 h-5" />
+                {!selectedType ? 'Add New Activity' : 'Configure New Activity'}
+              </h3>
               <button
                 onClick={handleCancelEdit}
-                className="text-gray-300 hover:text-gray-100"
+                className="p-2 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-lg transition-all"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -499,45 +514,49 @@ export default function EditableItinerary({
 
             {!selectedType ? (
               <div>
+                <p className="text-purple-300 text-sm mb-4 text-center">Choose what type of activity you'd like to add</p>
                 <div className="flex flex-wrap justify-center gap-3">
                   {GO_OUT_TYPES.map((type, idx) => (
                     <button
                       key={type.id}
                       onClick={() => handleTypeSelect(type.id)}
-                      className={`p-3 border-2 border-gray-600 hover:border-purple-500 hover:bg-purple-900 bg-gray-800 rounded-lg transition-all text-center ${
+                      className={`group p-4 border-2 border-purple-500/30 hover:border-purple-400 hover:bg-purple-800/50 bg-gray-800/50 rounded-xl transition-all text-center transform hover:scale-105 ${
                         idx < 3 ? 'w-[calc(33.333%-0.5rem)]' : 'w-[calc(33.333%-0.5rem)] md:w-auto'
                       }`}
                       style={idx >= 3 ? { minWidth: 'calc(33.333% - 0.5rem)' } : {}}
                     >
-                      <div className="text-2xl mb-1">{type.icon}</div>
-                      <div className="font-medium text-white text-sm">{type.name}</div>
+                      <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">{type.icon}</div>
+                      <div className="font-semibold text-purple-200 text-sm">{type.name}</div>
                     </button>
                   ))}
                 </div>
               </div>
             ) : (
               <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-2xl">{getTypeIcon(selectedType)}</span>
-                  <span className="font-semibold text-white">
-                    {GO_OUT_TYPES.find(t => t.id === selectedType)?.name}
-                  </span>
+                <div className="flex items-center gap-3 mb-4 p-3 bg-purple-900/30 rounded-lg border border-purple-500/30">
+                  <span className="text-3xl">{getTypeIcon(selectedType)}</span>
+                  <div>
+                    <span className="font-bold text-purple-200 text-lg">
+                      {GO_OUT_TYPES.find(t => t.id === selectedType)?.name}
+                    </span>
+                    <p className="text-purple-300 text-xs mt-1">Configure your preferences below</p>
+                  </div>
                 </div>
                 <GoOutFilters
                   type={selectedType}
                   filters={filters}
                   onUpdate={handleFilterUpdate}
                 />
-                <div className="flex gap-3 mt-4">
+                <div className="flex gap-3 mt-6">
                   <button
                     onClick={handleSaveEdit}
-                    className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                    className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-purple-500/50 transform hover:scale-[1.02]"
                   >
                     Add Activity
                   </button>
                   <button
                     onClick={handleCancelEdit}
-                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg transition-colors"
+                    className="px-6 py-3 bg-gray-700/50 hover:bg-gray-600/50 text-gray-200 font-semibold rounded-xl transition-all border border-gray-600 hover:border-gray-500"
                   >
                     Cancel
                   </button>
@@ -603,7 +622,7 @@ export default function EditableItinerary({
             return null;
           }
 
-          const apiKey = process.env.OPENROUTE_API_KEY;
+          const apiKey = process.env.NEXT_PUBLIC_OPENROUTE_API_KEY;
 
           return (
             <div className="w-[500px] flex-shrink-0">

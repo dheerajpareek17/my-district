@@ -49,8 +49,8 @@ export default function GoOutTypesStep({ formData, onBack, onSubmit, setFormData
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Configure Your Go-Outs</h2>
-        <p className="text-gray-600">Add and customize the activities for your itinerary</p>
+        <h2 className="text-3xl font-extrabold bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent mb-2">Configure Your Go-Outs</h2>
+        <p className="text-base text-purple-200">Add and customize the activities for your itinerary</p>
       </div>
 
       {/* Selected Go-Out Types */}
@@ -60,17 +60,17 @@ export default function GoOutTypesStep({ formData, onBack, onSubmit, setFormData
           const typeInfo = GO_OUT_TYPES.find(t => t.id === typeKey);
           
           return (
-            <div key={index} className="border-2 border-purple-200 rounded-lg p-4 bg-purple-50">
+            <div key={index} className="border-2 border-purple-500/50 rounded-xl p-5 bg-gray-800/40 backdrop-blur-sm">
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <span className="text-2xl">{typeInfo?.icon}</span>
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <h3 className="text-lg font-semibold text-purple-200">
                     {typeInfo?.name} #{index + 1}
                   </h3>
                 </div>
                 <button
                   onClick={() => removeGoOutType(index)}
-                  className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                  className="p-2 text-red-400 hover:bg-red-900/30 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -90,7 +90,7 @@ export default function GoOutTypesStep({ formData, onBack, onSubmit, setFormData
       {!showAddCard && (
         <button
           onClick={() => setShowAddCard(true)}
-          className="w-full py-4 border-2 border-dashed border-purple-300 hover:border-purple-500 rounded-lg text-purple-600 font-medium flex items-center justify-center gap-2 transition-colors"
+          className="w-full py-4 border-2 border-dashed border-purple-500 hover:border-purple-400 rounded-xl text-purple-300 hover:text-purple-200 bg-gray-800/30 hover:bg-gray-800/50 font-medium flex items-center justify-center gap-2 transition-all"
         >
           <Plus className="w-5 h-5" />
           Add Go-Out Type
@@ -98,12 +98,12 @@ export default function GoOutTypesStep({ formData, onBack, onSubmit, setFormData
       )}
 
       {showAddCard && (
-        <div className="border-2 border-purple-300 rounded-lg p-6 bg-white">
+        <div className="border-2 border-purple-500 rounded-xl p-6 bg-gray-800/50 backdrop-blur-sm">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Select Go-Out Type</h3>
+            <h3 className="text-lg font-semibold text-purple-200">Select Go-Out Type</h3>
             <button
               onClick={() => setShowAddCard(false)}
-              className="p-1 text-gray-400 hover:text-gray-600"
+              className="p-1 text-gray-400 hover:text-gray-200 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -114,13 +114,13 @@ export default function GoOutTypesStep({ formData, onBack, onSubmit, setFormData
               <button
                 key={type.id}
                 onClick={() => addGoOutType(type.id)}
-                className={`p-4 border-2 border-gray-200 hover:border-purple-500 hover:bg-purple-50 rounded-lg transition-all text-center ${
+                className={`p-4 border-2 border-gray-700 hover:border-purple-500 hover:bg-purple-900/30 bg-gray-900/50 rounded-xl transition-all text-center ${
                   idx < 3 ? 'w-[calc(33.333%-0.5rem)]' : 'w-[calc(33.333%-0.5rem)] md:w-auto'
                 }`}
                 style={idx >= 3 ? { minWidth: 'calc(33.333% - 0.5rem)' } : {}}
               >
                 <div className="text-3xl mb-2">{type.icon}</div>
-                <div className="font-medium text-gray-900">{type.name}</div>
+                <div className="font-medium text-white">{type.name}</div>
               </button>
             ))}
           </div>
@@ -131,14 +131,14 @@ export default function GoOutTypesStep({ formData, onBack, onSubmit, setFormData
       <div className="flex gap-4 pt-4">
         <button
           onClick={onBack}
-          className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-4 px-6 rounded-lg transition-colors"
+          className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-200 font-medium py-4 px-6 rounded-xl transition-colors"
         >
           Back
         </button>
         <button
           onClick={handleSubmit}
           disabled={selectedTypes.length === 0 || isGenerating}
-          className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-medium py-4 px-6 rounded-lg transition-colors shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-5 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-purple-500/50 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
         >
           {isGenerating ? (
             <>
