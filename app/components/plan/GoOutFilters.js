@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Search, Loader2, MapPin } from 'lucide-react';
+import { ChevronDown, ChevronUp, Search, Loader2, MapPin, Filter, Star, Users, Wifi, Car, Accessibility, WashingMachine, Coffee } from 'lucide-react';
 
 const FILTER_OPTIONS = {
   dinings: {
@@ -99,6 +99,16 @@ export default function GoOutFilters({ type, filters, onUpdate }) {
 
   const options = FILTER_OPTIONS[type] || {};
 
+  // Count active filters (non-empty arrays, defined booleans, and numbers)
+  const getActiveFilterCount = () => {
+    return Object.entries(localFilters).reduce((count, [key, value]) => {
+      if (Array.isArray(value) && value.length > 0) return count + 1;
+      if (typeof value === 'boolean') return count + 1;
+      if (typeof value === 'number') return count + 1;
+      return count;
+    }, 0);
+  };
+
   // Debounced search for venues
   useEffect(() => {
     if (searchQuery.length < 2) {
@@ -149,21 +159,21 @@ export default function GoOutFilters({ type, filters, onUpdate }) {
     const venue = filters;
     return (
       <div className="space-y-3">
-        <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
+        <div className="p-4 bg-purple-900/30 backdrop-blur-sm border border-purple-500/50 rounded-lg">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h4 className="font-semibold text-gray-900">{venue.name}</h4>
-              <p className="text-sm text-gray-600 mt-1">
+              <h4 className="font-semibold text-purple-200">{venue.name}</h4>
+              <p className="text-sm text-gray-300 mt-1">
                 Rating: {venue.rating || 'N/A'} ⭐ | Price: ₹{venue.pricePerPerson || 'N/A'}/person
               </p>
               {venue.address && (
-                <p className="text-xs text-gray-500 mt-1">{venue.address}</p>
+                <p className="text-xs text-gray-400 mt-1">{venue.address}</p>
               )}
             </div>
             <button
               type="button"
               onClick={handleClearVenue}
-              className="ml-4 px-3 py-1 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200"
+              className="ml-4 px-3 py-1 text-sm bg-red-900/50 text-red-300 rounded-lg hover:bg-red-900/70 border border-red-500/30 transition-colors"
             >
               Remove
             </button>
@@ -179,7 +189,12 @@ export default function GoOutFilters({ type, filters, onUpdate }) {
       ? current.filter(v => v !== value)
       : [...current, value];
     
-    const newFilters = { ...localFilters, [key]: updated };
+    const newFilters = { ...localFilters };
+    if (updated.length === 0) {
+      delete newFilters[key];
+    } else {
+      newFilters[key] = updated;
+    }
     setLocalFilters(newFilters);
     onUpdate({ filters: newFilters });
   };
@@ -212,7 +227,7 @@ export default function GoOutFilters({ type, filters, onUpdate }) {
             placeholder={`Search for a specific ${type.slice(0, -1)}...`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900"
+            className="w-full pl-10 pr-10 py-2 bg-gray-800/50 border border-purple-500/30 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-200 placeholder-gray-500"
           />
           {searchLoading && (
             <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 animate-spin" />
@@ -221,22 +236,22 @@ export default function GoOutFilters({ type, filters, onUpdate }) {
 
         {/* Autocomplete dropdown */}
         {searchResults.length > 0 && (
-          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+          <div className="absolute z-10 w-full mt-1 bg-gray-800/95 backdrop-blur-sm border border-purple-500/30 rounded-lg shadow-lg shadow-purple-500/20 max-h-60 overflow-y-auto">
             {searchResults.map((venue, index) => (
               <button
                 key={index}
                 type="button"
                 onClick={() => handleVenueSelect(venue)}
-                className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-start gap-2 border-b last:border-b-0"
+                className="w-full px-4 py-3 text-left hover:bg-purple-900/30 flex items-start gap-2 border-b border-gray-700/50 last:border-b-0 transition-colors"
               >
-                <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                <MapPin className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" />
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-gray-900">{venue.name}</div>
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="text-sm font-medium text-gray-200">{venue.name}</div>
+                  <div className="text-xs text-gray-400 mt-1">
                     {venue.rating && `⭐ ${venue.rating}`} {venue.pricePerPerson && `• ₹${venue.pricePerPerson}/person`}
                   </div>
                   {venue.address && (
-                    <div className="text-xs text-gray-400 mt-1">{venue.address}</div>
+                    <div className="text-xs text-gray-500 mt-1">{venue.address}</div>
                   )}
                 </div>
               </button>
@@ -245,38 +260,57 @@ export default function GoOutFilters({ type, filters, onUpdate }) {
         )}
       </div>
 
-      <div className="text-center text-sm text-gray-500">OR</div>
+      <div className="flex items-center gap-3 my-4">
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"></div>
+        <span className="text-sm font-medium text-purple-300">OR</span>
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"></div>
+      </div>
 
       {/* Filters toggle button */}
       <button
         type="button"
         onClick={() => setShowFilters(!showFilters)}
-        className="flex items-center justify-between w-full px-4 py-2 bg-white border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors"
+        className="group relative flex items-center justify-between w-full px-5 py-3 bg-gradient-to-r from-gray-800/50 to-gray-800/30 border border-purple-500/30 rounded-xl hover:from-purple-900/40 hover:to-pink-900/30 hover:border-purple-400/50 transition-all duration-300 shadow-lg hover:shadow-purple-500/20"
       >
-        <span className="font-medium text-gray-700">
-          {showFilters ? 'Hide' : 'Show'} Filters {Object.keys(localFilters).length > 0 && `(${Object.keys(localFilters).length} active)`}
-        </span>
-        {showFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-purple-600/20 rounded-lg group-hover:bg-purple-600/30 transition-colors">
+            <Filter className="w-4 h-4 text-purple-400" />
+          </div>
+          <span className="font-semibold text-purple-200 group-hover:text-purple-100 transition-colors">
+            {showFilters ? 'Hide' : 'Show'} Filters
+            {getActiveFilterCount() > 0 && (
+              <span className="ml-2 px-2 py-0.5 bg-purple-600 text-white text-xs rounded-full">
+                {getActiveFilterCount()}
+              </span>
+            )}
+          </span>
+        </div>
+        {showFilters ? (
+          <ChevronUp className="w-5 h-5 text-purple-300 group-hover:text-purple-200 transition-colors" />
+        ) : (
+          <ChevronDown className="w-5 h-5 text-purple-300 group-hover:text-purple-200 transition-colors" />
+        )}
       </button>
 
       {showFilters && (
-        <div className="mt-4 space-y-4 p-4 bg-white border border-purple-100 rounded-lg max-h-96 overflow-y-auto">
+        <div className="mt-4 space-y-5 p-5 bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-md border border-purple-500/40 rounded-2xl max-h-96 overflow-y-auto shadow-xl shadow-purple-500/10 animate-in slide-in-from-top-2 duration-300">
           {/* Type-specific filters */}
           {Object.entries(options).map(([key, values]) => (
-            <div key={key}>
-              <label className="block text-sm font-medium text-gray-700 mb-2 capitalize">
+            <div key={key} className="p-4 bg-gray-900/30 rounded-xl border border-purple-500/20">
+              <label className="flex items-center gap-2 text-sm font-semibold text-purple-300 mb-3 capitalize">
+                <div className="w-1 h-4 bg-gradient-to-b from-purple-400 to-pink-400 rounded-full"></div>
                 {key}
               </label>
-              <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+              <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto custom-scrollbar">
                 {values.map((value) => (
                   <button
                     key={value}
                     type="button"
                     onClick={() => handleArrayToggle(key, value)}
-                    className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
+                    className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all duration-200 transform hover:scale-105 ${
                       (localFilters[key] || []).includes(value)
-                        ? 'bg-purple-600 text-white border-purple-600'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400'
+                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white border-purple-500 shadow-lg shadow-purple-500/50'
+                        : 'bg-gray-800/50 text-gray-300 border-gray-600/50 hover:border-purple-400 hover:bg-purple-900/30 hover:text-purple-200'
                     }`}
                   >
                     {value}
@@ -288,111 +322,140 @@ export default function GoOutFilters({ type, filters, onUpdate }) {
 
           {/* Alcohol for dining */}
           {type === 'dinings' && (
-            <div className="border-t border-gray-200 pt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="p-4 bg-gray-900/30 rounded-xl border border-purple-500/20">
+              <label className="flex items-center gap-2 text-sm font-semibold text-purple-300 mb-3">
+                <div className="w-1 h-4 bg-gradient-to-b from-purple-400 to-pink-400 rounded-full"></div>
                 Alcohol
               </label>
               <button
                 type="button"
                 onClick={() => handleBooleanToggle('alcohol')}
-                className={`px-4 py-2 rounded-lg text-sm border transition-colors ${
+                className={`w-full px-4 py-3 rounded-lg text-sm font-medium border transition-all duration-200 transform hover:scale-[1.02] ${
                   localFilters.alcohol === true
-                    ? 'bg-green-600 text-white border-green-600'
+                    ? 'bg-gradient-to-r from-green-600 to-green-700 text-white border-green-500 shadow-lg shadow-green-500/30'
                     : localFilters.alcohol === false
-                    ? 'bg-red-600 text-white border-red-600'
-                    : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400'
+                    ? 'bg-gradient-to-r from-red-600 to-red-700 text-white border-red-500 shadow-lg shadow-red-500/30'
+                    : 'bg-gray-800/50 text-gray-300 border-gray-600/50 hover:border-purple-400 hover:bg-purple-900/30'
                 }`}
               >
-                {localFilters.alcohol === true && 'Required ✓'}
-                {localFilters.alcohol === false && 'Not Required ✗'}
+                {localFilters.alcohol === true && '🍷 Required ✓'}
+                {localFilters.alcohol === false && '🚫 Not Required ✗'}
                 {localFilters.alcohol === undefined && 'No Preference'}
               </button>
             </div>
           )}
 
           {/* Amenity Filters */}
-          <div className="border-t border-gray-200 pt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="p-4 bg-gray-900/30 rounded-xl border border-purple-500/20">
+            <label className="flex items-center gap-2 text-sm font-semibold text-purple-300 mb-3">
+              <div className="w-1 h-4 bg-gradient-to-b from-purple-400 to-pink-400 rounded-full"></div>
               Amenities
             </label>
             <div className="grid grid-cols-2 gap-2">
-              {AMENITY_FILTERS.map((amenity) => (
-                <button
-                  key={amenity}
-                  type="button"
-                  onClick={() => handleBooleanToggle(amenity)}
-                  className={`px-3 py-2 rounded-lg text-sm border transition-colors capitalize ${
-                    localFilters[amenity] === true
-                      ? 'bg-green-600 text-white border-green-600'
-                      : localFilters[amenity] === false
-                      ? 'bg-red-600 text-white border-red-600'
-                      : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400'
-                  }`}
-                >
-                  {amenity}
-                  {localFilters[amenity] === true && ' ✓'}
-                  {localFilters[amenity] === false && ' ✗'}
-                </button>
-              ))}
+              {AMENITY_FILTERS.map((amenity) => {
+                const amenityIcons = {
+                  wifi: <Wifi className="w-4 h-4" />,
+                  washroom: <WashingMachine className="w-4 h-4" />,
+                  wheelchair: <Accessibility className="w-4 h-4" />,
+                  parking: <Car className="w-4 h-4" />
+                };
+                return (
+                  <button
+                    key={amenity}
+                    type="button"
+                    onClick={() => handleBooleanToggle(amenity)}
+                    className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium border transition-all duration-200 transform hover:scale-[1.02] capitalize ${
+                      localFilters[amenity] === true
+                        ? 'bg-gradient-to-r from-green-600 to-green-700 text-white border-green-500 shadow-lg shadow-green-500/30'
+                        : localFilters[amenity] === false
+                        ? 'bg-gradient-to-r from-red-600 to-red-700 text-white border-red-500 shadow-lg shadow-red-500/30'
+                        : 'bg-gray-800/50 text-gray-300 border-gray-600/50 hover:border-purple-400 hover:bg-purple-900/30'
+                    }`}
+                  >
+                    {amenityIcons[amenity]}
+                    <span>{amenity}</span>
+                    {localFilters[amenity] === true && <span>✓</span>}
+                    {localFilters[amenity] === false && <span>✗</span>}
+                  </button>
+                );
+              })}
               
               {/* Cafe for plays */}
               {type === 'plays' && (
                 <button
                   type="button"
                   onClick={() => handleBooleanToggle('cafe')}
-                  className={`px-3 py-2 rounded-lg text-sm border transition-colors ${
+                  className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium border transition-all duration-200 transform hover:scale-[1.02] ${
                     localFilters.cafe === true
-                      ? 'bg-green-600 text-white border-green-600'
+                      ? 'bg-gradient-to-r from-green-600 to-green-700 text-white border-green-500 shadow-lg shadow-green-500/30'
                       : localFilters.cafe === false
-                      ? 'bg-red-600 text-white border-red-600'
-                      : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400'
+                      ? 'bg-gradient-to-r from-red-600 to-red-700 text-white border-red-500 shadow-lg shadow-red-500/30'
+                      : 'bg-gray-800/50 text-gray-300 border-gray-600/50 hover:border-purple-400 hover:bg-purple-900/30'
                   }`}
                 >
-                  cafe
-                  {localFilters.cafe === true && ' ✓'}
-                  {localFilters.cafe === false && ' ✗'}
+                  <Coffee className="w-4 h-4" />
+                  <span>cafe</span>
+                  {localFilters.cafe === true && <span>✓</span>}
+                  {localFilters.cafe === false && <span>✗</span>}
                 </button>
               )}
             </div>
           </div>
 
           {/* Rating */}
-          <div className="border-t border-gray-200 pt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="p-4 bg-gray-900/30 rounded-xl border border-purple-500/20">
+            <label className="flex items-center gap-2 text-sm font-semibold text-purple-300 mb-3">
+              <div className="w-1 h-4 bg-gradient-to-b from-purple-400 to-pink-400 rounded-full"></div>
+              <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
               Minimum Rating
             </label>
-            <input
-              type="number"
-              min="0"
-              max="5"
-              step="0.1"
-              placeholder="e.g., 4.5"
-              value={localFilters.rating || ''}
-              onChange={(e) => handleNumberChange('rating', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900"
-            />
+            <div className="relative">
+              <input
+                type="number"
+                min="0"
+                max="5"
+                step="0.1"
+                placeholder="e.g., 4.5"
+                value={localFilters.rating || ''}
+                onChange={(e) => handleNumberChange('rating', e.target.value)}
+                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600/50 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-200 placeholder-gray-500 font-medium transition-all duration-200"
+              />
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                <Star className="w-5 h-5" />
+              </div>
+            </div>
           </div>
 
           {/* Crowd Tolerance */}
-          <div className="border-t border-gray-200 pt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="p-4 bg-gray-900/30 rounded-xl border border-purple-500/20">
+            <label className="flex items-center gap-2 text-sm font-semibold text-purple-300 mb-3">
+              <div className="w-1 h-4 bg-gradient-to-b from-purple-400 to-pink-400 rounded-full"></div>
+              <Users className="w-4 h-4" />
               Crowd Tolerance
             </label>
-            <div className="flex gap-2">
-              {CROWD_TOLERANCE.map((level) => (
-                <button
-                  key={level}
-                  type="button"
-                  onClick={() => handleArrayToggle('crowdTolerance', level)}
-                  className={`flex-1 px-3 py-2 rounded-lg text-sm border transition-colors capitalize ${
-                    (localFilters.crowdTolerance || []).includes(level)
-                      ? 'bg-purple-600 text-white border-purple-600'
-                      : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400'
-                  }`}
-                >
-                  {level}
-                </button>
-              ))}
+            <div className="grid grid-cols-3 gap-2">
+              {CROWD_TOLERANCE.map((level) => {
+                const crowdIcons = {
+                  low: '😌',
+                  medium: '👥',
+                  high: '🎉'
+                };
+                return (
+                  <button
+                    key={level}
+                    type="button"
+                    onClick={() => handleArrayToggle('crowdTolerance', level)}
+                    className={`flex flex-col items-center gap-1 px-3 py-3 rounded-lg text-sm font-medium border transition-all duration-200 transform hover:scale-[1.02] capitalize ${
+                      (localFilters.crowdTolerance || []).includes(level)
+                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white border-purple-500 shadow-lg shadow-purple-500/50'
+                        : 'bg-gray-800/50 text-gray-300 border-gray-600/50 hover:border-purple-400 hover:bg-purple-900/30'
+                    }`}
+                  >
+                    <span className="text-xl">{crowdIcons[level]}</span>
+                    <span>{level}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

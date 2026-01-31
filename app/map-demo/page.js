@@ -10,8 +10,8 @@ export default function MapDemo() {
     { lng: 77.3910, lat: 28.5355, name: "Noida Sector 18 Mall 🏢" }
   ];
   
-  // Hardcoded API key for testing
-  const apiKey = process.env.OPENROUTE_API_KEY;
+  // API key for testing
+  const apiKey = process.env.NEXT_PUBLIC_OPENROUTE_API_KEY;
   
   console.log('MapDemo - API Key:', apiKey ? 'Present' : 'Missing');
   console.log('MapDemo - Locations:', locations);

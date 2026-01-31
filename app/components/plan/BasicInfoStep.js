@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, MapPin, LocateFixed, Search, Loader2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, MapPin, LocateFixed, Search, Loader2, Clock, DollarSign, Users, Sparkles, ArrowRight } from 'lucide-react';
 
 export default function BasicInfoStep({ formData, onNext }) {
   const [localData, setLocalData] = useState(formData);
@@ -231,77 +231,118 @@ export default function BasicInfoStep({ formData, onNext }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <h2 className="text-2xl font-extrabold text-yellow-300 mb-6">Basic Information</h2>
+        {/* Enhanced Header with Icon */}
+        <div className="flex items-center gap-3 mb-8">
+          <div className="p-3 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl shadow-lg shadow-purple-500/30">
+            <Sparkles className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h2 className="text-3xl font-extrabold bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
+              Basic Information
+            </h2>
+            <p className="text-sm text-gray-400 mt-1">Let's plan your perfect day out!</p>
+          </div>
+        </div>
         
-        {/* Mandatory Fields */}
-        <div className="space-y-4">
-          {/* Start Time */}
-          <div>
-            <label className="block text-sm font-medium text-yellow-300 mb-2">
-              Start Time <span className="text-red-500">*</span>
+        {/* Mandatory Fields - Enhanced Grid Layout */}
+        <div className="space-y-5">
+          {/* Start Time - With Icon */}
+          <div className="group">
+            <label className="flex items-center gap-2 text-sm font-semibold text-purple-200 mb-3">
+              <Clock className="w-4 h-4 text-purple-400" />
+              Start Time <span className="text-red-400">*</span>
             </label>
-            <input
-              type="number"
-              min="0"
-              max="23"
-              placeholder="18 (6 PM in 24-hour format)"
-              value={localData.startTime}
-              onChange={(e) => setLocalData(prev => ({ ...prev, startTime: e.target.value }))}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-purple-300 font-semibold ${
-                errors.startTime ? 'border-red-500' : 'border-gray-300'
-              }`}
-            />
-            {errors.startTime && <p className="text-red-500 text-sm mt-1">{errors.startTime}</p>}
+            <div className="relative">
+              <input
+                type="number"
+                min="0"
+                max="23"
+                placeholder="18 (6 PM in 24-hour format)"
+                value={localData.startTime}
+                onChange={(e) => setLocalData(prev => ({ ...prev, startTime: e.target.value }))}
+                className={`w-full pl-4 pr-4 py-4 bg-gray-800/50 border-2 rounded-xl
+                  focus:ring-2 focus:ring-purple-500 focus:border-purple-500
+                  text-white font-semibold text-lg placeholder-gray-500
+                  transition-all duration-200 hover:bg-gray-800/70
+                  ${errors.startTime ? 'border-red-500 bg-red-900/10' : 'border-gray-700 focus:bg-gray-800'}`}
+              />
+            </div>
+            {errors.startTime && (
+              <p className="text-red-400 text-sm mt-2 flex items-center gap-1">
+                <span>⚠️</span> {errors.startTime}
+              </p>
+            )}
           </div>
 
-          {/* Budget */}
-          <div>
-            <label className="block text-sm font-medium text-yellow-300 mb-2">
-              Total Budget (₹) <span className="text-red-500">*</span>
+          {/* Budget - With Icon */}
+          <div className="group">
+            <label className="flex items-center gap-2 text-sm font-semibold text-purple-200 mb-3">
+              <DollarSign className="w-4 h-4 text-purple-400" />
+              Total Budget (₹) <span className="text-red-400">*</span>
             </label>
-            <input
-              type="number"
-              min="0"
-              placeholder="5000"
-              value={localData.budget}
-              onChange={(e) => setLocalData(prev => ({ ...prev, budget: e.target.value }))}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-purple-300 font-semibold ${
-                errors.budget ? 'border-red-500' : 'border-gray-300'
-              }`}
-            />
-            {errors.budget && <p className="text-red-500 text-sm mt-1">{errors.budget}</p>}
+            <div className="relative">
+              <input
+                type="number"
+                min="0"
+                placeholder="5000"
+                value={localData.budget}
+                onChange={(e) => setLocalData(prev => ({ ...prev, budget: e.target.value }))}
+                className={`w-full pl-4 pr-4 py-4 bg-gray-800/50 border-2 rounded-xl
+                  focus:ring-2 focus:ring-purple-500 focus:border-purple-500
+                  text-white font-semibold text-lg placeholder-gray-500
+                  transition-all duration-200 hover:bg-gray-800/70
+                  ${errors.budget ? 'border-red-500 bg-red-900/10' : 'border-gray-700 focus:bg-gray-800'}`}
+              />
+            </div>
+            {errors.budget && (
+              <p className="text-red-400 text-sm mt-2 flex items-center gap-1">
+                <span>⚠️</span> {errors.budget}
+              </p>
+            )}
           </div>
 
-          {/* Number of People */}
-          <div>
-            <label className="block text-sm font-medium text-yellow-300 mb-2">
-              Number of People <span className="text-red-500">*</span>
+          {/* Number of People - With Icon */}
+          <div className="group">
+            <label className="flex items-center gap-2 text-sm font-semibold text-purple-200 mb-3">
+              <Users className="w-4 h-4 text-purple-400" />
+              Number of People <span className="text-red-400">*</span>
             </label>
-            <input
-              type="number"
-              min="1"
-              placeholder="2"
-              value={localData.numberOfPeople}
-              onChange={(e) => setLocalData(prev => ({ ...prev, numberOfPeople: e.target.value }))}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-purple-300 font-semibold ${
-                errors.numberOfPeople ? 'border-red-500' : 'border-gray-300'
-              }`}
-            />
-            {errors.numberOfPeople && <p className="text-red-500 text-sm mt-1">{errors.numberOfPeople}</p>}
+            <div className="relative">
+              <input
+                type="number"
+                min="1"
+                placeholder="2"
+                value={localData.numberOfPeople}
+                onChange={(e) => setLocalData(prev => ({ ...prev, numberOfPeople: e.target.value }))}
+                className={`w-full pl-4 pr-4 py-4 bg-gray-800/50 border-2 rounded-xl
+                  focus:ring-2 focus:ring-purple-500 focus:border-purple-500
+                  text-white font-semibold text-lg placeholder-gray-500
+                  transition-all duration-200 hover:bg-gray-800/70
+                  ${errors.numberOfPeople ? 'border-red-500 bg-red-900/10' : 'border-gray-700 focus:bg-gray-800'}`}
+              />
+            </div>
+            {errors.numberOfPeople && (
+              <p className="text-red-400 text-sm mt-2 flex items-center gap-1">
+                <span>⚠️</span> {errors.numberOfPeople}
+              </p>
+            )}
           </div>
 
-          {/* Start Location */}
-          <div>
-            <label className="block text-sm font-medium text-yellow-300 mb-2">
-              Start Location <span className="text-red-500">*</span>
+          {/* Start Location - With Icon */}
+          <div className="group">
+            <label className="flex items-center gap-2 text-sm font-semibold text-purple-200 mb-3">
+              <MapPin className="w-4 h-4 text-purple-400" />
+              Start Location <span className="text-red-400">*</span>
             </label>
             
-            {/* Selected location display */}
+            {/* Selected location display - Enhanced */}
             {selectedStartLocation && (
-              <div className="mb-2 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-green-600" />
-                  <span className="text-sm text-gray-700">{selectedStartLocation}</span>
+              <div className="mb-3 p-4 bg-gradient-to-r from-green-900/30 to-emerald-900/30 border-2 border-green-600/50 rounded-xl flex items-center justify-between backdrop-blur-sm">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-green-600/20 rounded-lg">
+                    <MapPin className="w-5 h-5 text-green-400" />
+                  </div>
+                  <span className="text-sm font-medium text-green-200">{selectedStartLocation}</span>
                 </div>
                 <button
                   type="button"
@@ -312,35 +353,37 @@ export default function BasicInfoStep({ formData, onNext }) {
                       startLocation: { lat: '', lng: '' }
                     }));
                   }}
-                  className="text-xs text-red-600 hover:text-red-700"
+                  className="px-3 py-1 text-xs font-medium text-red-300 hover:text-red-200 bg-red-900/30 hover:bg-red-900/50 rounded-lg transition-colors"
                 >
                   Change
                 </button>
               </div>
             )}
 
-            {/* Search input */}
+            {/* Search input - Enhanced */}
             {!selectedStartLocation && (
               <div className="relative">
                 <div className="relative">
-                  <Search className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+                  <Search className="absolute left-4 top-4 w-5 h-5 text-gray-400" />
                   <input
                     type="text"
                     placeholder="Search for a location (e.g., Juhu Beach, Mumbai)"
                     value={startLocationQuery}
                     onChange={(e) => setStartLocationQuery(e.target.value)}
-                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900 ${
-                      errors.startLocation ? 'border-red-500' : 'border-gray-300'
-                    }`}
+                    className={`w-full pl-12 pr-14 py-4 bg-gray-800/50 border-2 rounded-xl
+                      focus:ring-2 focus:ring-purple-500 focus:border-purple-500
+                      text-white placeholder-gray-500
+                      transition-all duration-200 hover:bg-gray-800/70
+                      ${errors.startLocation ? 'border-red-500 bg-red-900/10' : 'border-gray-700 focus:bg-gray-800'}`}
                   />
                   {/* Current Location Icon or Loading Spinner */}
                   {loadingCurrentLocation ? (
-                    <Loader2 className="absolute right-3 top-3.5 w-5 h-5 text-gray-400 animate-spin" />
+                    <Loader2 className="absolute right-4 top-4 w-5 h-5 text-purple-400 animate-spin" />
                   ) : (
                     <button
                       type="button"
                       onClick={handleUseCurrentLocation}
-                      className="absolute right-3 top-3.5 text-blue-600 hover:text-blue-700 transition-colors"
+                      className="absolute right-4 top-4 text-blue-400 hover:text-blue-300 transition-all hover:scale-110"
                       title="Use current location"
                     >
                       <LocateFixed className="w-5 h-5" />
@@ -348,20 +391,20 @@ export default function BasicInfoStep({ formData, onNext }) {
                   )}
                 </div>
 
-                {/* Autocomplete dropdown */}
+                {/* Autocomplete dropdown - Enhanced */}
                 {startLocationSuggestions.length > 0 && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                  <div className="absolute z-10 w-full mt-2 bg-gray-800 border-2 border-gray-700 rounded-xl shadow-2xl max-h-60 overflow-y-auto backdrop-blur-lg">
                     {startLocationSuggestions.map((suggestion, index) => (
                       <button
                         key={index}
                         type="button"
                         onClick={() => handleStartLocationSelect(suggestion)}
-                        className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-start gap-2 border-b last:border-b-0"
+                        className="w-full px-4 py-3 text-left hover:bg-purple-900/30 flex items-start gap-3 border-b border-gray-700 last:border-b-0 transition-colors"
                       >
-                        <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                        <MapPin className="w-4 h-4 text-purple-400 mt-1 flex-shrink-0" />
                         <div>
-                          <div className="text-sm font-medium text-gray-900">{suggestion.name}</div>
-                          <div className="text-xs text-gray-500">{suggestion.label}</div>
+                          <div className="text-sm font-medium text-white">{suggestion.name}</div>
+                          <div className="text-xs text-gray-400">{suggestion.label}</div>
                         </div>
                       </button>
                     ))}
@@ -370,7 +413,11 @@ export default function BasicInfoStep({ formData, onNext }) {
               </div>
             )}
 
-            {errors.startLocation && <p className="text-red-500 text-sm mt-1">{errors.startLocation}</p>}
+            {errors.startLocation && (
+              <p className="text-red-400 text-sm mt-2 flex items-center gap-1">
+                <span>⚠️</span> {errors.startLocation}
+              </p>
+            )}
           </div>
         </div>
 
@@ -380,7 +427,7 @@ export default function BasicInfoStep({ formData, onNext }) {
             <button
               type="button"
               onClick={() => setShowOptional(!showOptional)}
-              className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-purple-600 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-800/30 hover:bg-gray-800/50 text-purple-200 hover:text-purple-100 rounded-lg transition-all border border-gray-700"
             >
               <span className="text-sm font-medium">Configure More Options</span>
               {showOptional ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -388,10 +435,11 @@ export default function BasicInfoStep({ formData, onNext }) {
           </div>
 
           {showOptional && (
-            <div className="mt-4 space-y-4 p-4 bg-gray-50 rounded-lg">
+            <div className="mt-4 space-y-5 p-6 bg-gray-800/40 backdrop-blur-sm rounded-xl border-2 border-gray-700/50">
               {/* End Time */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="group">
+                <label className="flex items-center gap-2 text-sm font-semibold text-purple-200 mb-3">
+                  <Clock className="w-4 h-4 text-purple-400" />
                   End Time (Optional)
                 </label>
                 <input
@@ -401,22 +449,25 @@ export default function BasicInfoStep({ formData, onNext }) {
                   placeholder="22 (10 PM in 24-hour format)"
                   value={localData.endTime}
                   onChange={(e) => setLocalData(prev => ({ ...prev, endTime: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900"
+                  className="w-full pl-4 pr-4 py-4 bg-gray-800/50 border-2 border-gray-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white font-semibold text-lg placeholder-gray-500 transition-all duration-200 hover:bg-gray-800/70 focus:bg-gray-800"
                 />
               </div>
 
               {/* End Location */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="group">
+                <label className="flex items-center gap-2 text-sm font-semibold text-purple-200 mb-3">
+                  <MapPin className="w-4 h-4 text-purple-400" />
                   End Location (Optional)
                 </label>
                 
-                {/* Selected location display */}
+                {/* Selected location display - Enhanced */}
                 {selectedEndLocation && (
-                  <div className="mb-2 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-green-600" />
-                      <span className="text-sm text-gray-700">{selectedEndLocation}</span>
+                  <div className="mb-3 p-4 bg-gradient-to-r from-green-900/30 to-emerald-900/30 border-2 border-green-600/50 rounded-xl flex items-center justify-between backdrop-blur-sm">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-green-600/20 rounded-lg">
+                        <MapPin className="w-5 h-5 text-green-400" />
+                      </div>
+                      <span className="text-sm font-medium text-green-200">{selectedEndLocation}</span>
                     </div>
                     <button
                       type="button"
@@ -427,33 +478,33 @@ export default function BasicInfoStep({ formData, onNext }) {
                           endLocation: { lat: '', lng: '' }
                         }));
                       }}
-                      className="text-xs text-red-600 hover:text-red-700"
+                      className="px-3 py-1 text-xs font-medium text-red-300 hover:text-red-200 bg-red-900/30 hover:bg-red-900/50 rounded-lg transition-colors"
                     >
                       Change
                     </button>
                   </div>
                 )}
 
-                {/* Search input */}
+                {/* Search input - Enhanced */}
                 {!selectedEndLocation && (
                   <div className="relative">
                     <div className="relative">
-                      <Search className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+                      <Search className="absolute left-4 top-4 w-5 h-5 text-gray-400" />
                       <input
                         type="text"
                         placeholder="Search for end location (optional)"
                         value={endLocationQuery}
                         onChange={(e) => setEndLocationQuery(e.target.value)}
-                        className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900"
+                        className="w-full pl-12 pr-14 py-4 bg-gray-800/50 border-2 border-gray-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white placeholder-gray-500 transition-all duration-200 hover:bg-gray-800/70 focus:bg-gray-800"
                       />
                       {/* Current Location Icon or Loading Spinner */}
                       {loadingEndCurrentLocation ? (
-                        <Loader2 className="absolute right-3 top-3.5 w-5 h-5 text-gray-400 animate-spin" />
+                        <Loader2 className="absolute right-4 top-4 w-5 h-5 text-purple-400 animate-spin" />
                       ) : (
                         <button
                           type="button"
                           onClick={handleUseEndCurrentLocation}
-                          className="absolute right-3 top-3.5 text-blue-600 hover:text-blue-700 transition-colors"
+                          className="absolute right-4 top-4 text-blue-400 hover:text-blue-300 transition-all hover:scale-110"
                           title="Use current location"
                         >
                           <LocateFixed className="w-5 h-5" />
@@ -461,20 +512,20 @@ export default function BasicInfoStep({ formData, onNext }) {
                       )}
                     </div>
 
-                    {/* Autocomplete dropdown */}
+                    {/* Autocomplete dropdown - Enhanced */}
                     {endLocationSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-2 bg-gray-800 border-2 border-gray-700 rounded-xl shadow-2xl max-h-60 overflow-y-auto backdrop-blur-lg">
                         {endLocationSuggestions.map((suggestion, index) => (
                           <button
                             key={index}
                             type="button"
                             onClick={() => handleEndLocationSelect(suggestion)}
-                            className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-start gap-2 border-b last:border-b-0"
+                            className="w-full px-4 py-3 text-left hover:bg-purple-900/30 flex items-start gap-3 border-b border-gray-700 last:border-b-0 transition-colors"
                           >
-                            <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                            <MapPin className="w-4 h-4 text-purple-400 mt-1 flex-shrink-0" />
                             <div>
-                              <div className="text-sm font-medium text-gray-900">{suggestion.name}</div>
-                              <div className="text-xs text-gray-500">{suggestion.label}</div>
+                              <div className="text-sm font-medium text-white">{suggestion.name}</div>
+                              <div className="text-xs text-gray-400">{suggestion.label}</div>
                             </div>
                           </button>
                         ))}
@@ -485,8 +536,9 @@ export default function BasicInfoStep({ formData, onNext }) {
               </div>
 
               {/* Extra Info */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="group">
+                <label className="flex items-center gap-2 text-sm font-semibold text-purple-200 mb-3">
+                  <Sparkles className="w-4 h-4 text-purple-400" />
                   Additional Preferences (Optional)
                 </label>
                 <textarea
@@ -494,13 +546,14 @@ export default function BasicInfoStep({ formData, onNext }) {
                   placeholder="E.g., romantic evening, good ambience, live music..."
                   value={localData.extraInfo}
                   onChange={(e) => setLocalData(prev => ({ ...prev, extraInfo: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none text-gray-900"
+                  className="w-full px-4 py-4 bg-gray-800/50 border-2 border-gray-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white placeholder-gray-500 resize-none transition-all duration-200 hover:bg-gray-800/70 focus:bg-gray-800"
                 />
               </div>
 
               {/* Travel Tolerance */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="group">
+                <label className="flex items-center gap-2 text-sm font-semibold text-purple-200 mb-3">
+                  <MapPin className="w-4 h-4 text-purple-400" />
                   Travel Tolerance (Optional)
                 </label>
                 <div className="flex gap-3">
@@ -509,10 +562,10 @@ export default function BasicInfoStep({ formData, onNext }) {
                       key={level}
                       type="button"
                       onClick={() => handleTravelToleranceToggle(level)}
-                      className={`flex-1 py-2 px-4 rounded-lg border-2 transition-colors capitalize ${
+                      className={`flex-1 py-3 px-4 rounded-xl border-2 transition-all duration-200 capitalize font-semibold ${
                         (localData.travelTolerance || []).includes(level)
-                          ? 'bg-purple-600 text-white border-purple-600'
-                          : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400'
+                          ? 'bg-purple-600 text-white border-purple-600 shadow-lg shadow-purple-500/30 scale-105'
+                          : 'bg-gray-800/50 text-gray-300 border-gray-700 hover:border-purple-500 hover:bg-gray-800/70'
                       }`}
                     >
                       {level}
@@ -525,12 +578,16 @@ export default function BasicInfoStep({ formData, onNext }) {
         </div>
       </div>
 
-      {/* Next Button */}
+      {/* Enhanced Next Button */}
       <button
         type="submit"
-        className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-4 px-6 rounded-lg transition-colors shadow-lg hover:shadow-xl"
+        className="group relative w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-5 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-purple-500/50 transform hover:scale-[1.02] overflow-hidden"
       >
-        Next: Choose Go-Out Types
+        <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></span>
+        <span className="relative flex items-center justify-center gap-3 text-lg">
+          <span>Next: Choose Go-Out Types</span>
+          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+        </span>
       </button>
     </form>
   );

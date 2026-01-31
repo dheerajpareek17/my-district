@@ -378,13 +378,49 @@ export async function POST(request) {
     // Score itineraries using AI (batchSize=1 processes one at a time)
     const scoredItineraries = await scoreItineraries(validItineraries, body, 1);
     
-    // Get top 4 itineraries (already sorted highest to lowest by scoreItineraries)
-    const top4 = scoredItineraries.slice(0, 4);
+    // Remove duplicate itineraries - ensure no venue appears in multiple selected itineraries
+    const uniqueItineraries = [];
+    const usedVenues = new Set();
+    
+    for (const itinerary of scoredItineraries) {
+      // Get all venue IDs/names in this itinerary
+      const venueIds = itinerary.itinerary.map(item => {
+        const typeName = Object.keys(item)[0];
+        const venue = item[typeName];
+        // Create a unique identifier for the venue
+        if (venue._id) {
+          return String(venue._id);
+        } else if (venue.name) {
+          return venue.name.toLowerCase().trim();
+        } else {
+          return JSON.stringify(venue);
+        }
+      });
+      
+      // Check if any venue in this itinerary has been used before
+      const hasUsedVenue = venueIds.some(venueId => usedVenues.has(venueId));
+      
+      // Only add this itinerary if all its venues are new
+      if (!hasUsedVenue) {
+        uniqueItineraries.push(itinerary);
+        // Mark all venues in this itinerary as used
+        venueIds.forEach(venueId => usedVenues.add(venueId));
+      }
+      
+      // Stop once we have 4 unique itineraries
+      if (uniqueItineraries.length >= 4) {
+        break;
+      }
+    }
+    
+    console.log(`Total scored itineraries: ${scoredItineraries.length}`);
+    console.log(`Unique itineraries (no shared venues): ${uniqueItineraries.length}`);
+    console.log(`Total unique venues used: ${usedVenues.size}`);
 
     return NextResponse.json({
       success: true,
-      itineraries: top4,
-      totalCombinations: scoredItineraries.length
+      itineraries: uniqueItineraries,
+      totalCombinations: uniqueItineraries.length
     }, { status: 200 });
 
   } catch (error) {

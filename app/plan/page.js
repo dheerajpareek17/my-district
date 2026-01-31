@@ -93,23 +93,62 @@ export default function PlanItinerary() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-purple-900 to-purple-700 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Hero - Basic Information in District style */}
+    <div className="min-h-screen bg-gradient-to-b from-black via-purple-900 to-purple-700 py-12 px-4 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Gradient Orbs */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-40 right-20 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        
+        {/* Floating Shapes */}
+        <div className="absolute top-32 right-1/4 w-4 h-4 bg-purple-400/40 rounded-full animate-float"></div>
+        <div className="absolute top-48 left-1/4 w-3 h-3 bg-pink-400/40 rounded-full animate-float" style={{ animationDelay: '0.5s' }}></div>
+        <div className="absolute bottom-40 right-1/3 w-5 h-5 bg-blue-400/40 rounded-full animate-float" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/3 left-1/2 w-2 h-2 bg-purple-300/40 rounded-full animate-float" style={{ animationDelay: '1.5s' }}></div>
+        
+        {/* Geometric Lines */}
+        <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#a855f7" />
+              <stop offset="100%" stopColor="#ec4899" />
+            </linearGradient>
+          </defs>
+          <line x1="0" y1="50%" x2="100%" y2="50%" stroke="url(#line-gradient)" strokeWidth="1" className="animate-pulse" />
+          <line x1="20%" y1="0" x2="20%" y2="100%" stroke="url(#line-gradient)" strokeWidth="1" className="animate-pulse" style={{ animationDelay: '0.5s' }} />
+          <line x1="80%" y1="0" x2="80%" y2="100%" stroke="url(#line-gradient)" strokeWidth="1" className="animate-pulse" style={{ animationDelay: '1s' }} />
+          <circle cx="10%" cy="30%" r="50" stroke="url(#line-gradient)" strokeWidth="1" fill="none" className="animate-spin-slow" />
+          <circle cx="90%" cy="70%" r="70" stroke="url(#line-gradient)" strokeWidth="1" fill="none" className="animate-spin-slow" style={{ animationDelay: '1s' }} />
+        </svg>
+        
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(168,85,247,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(168,85,247,0.03)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+      </div>
+
+      <div className="max-w-4xl mx-auto relative z-10">
+        {/* Hero - Enhanced District Branding */}
         <div className="mb-8">
-          <div className="rounded-2xl overflow-hidden shadow-lg">
-            <div className="bg-gradient-to-br from-purple-700 to-purple-500 text-white p-10 md:p-14 flex flex-col items-center">
-              <div className="mb-4">
-                <svg width="200" height="72" viewBox="0 0 440 160" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                  <rect width="440" height="160" rx="20" fill="transparent" />
-                  <text x="50%" y="45%" dominantBaseline="middle" textAnchor="middle" fill="#FFF" fontFamily="Helvetica, Arial, sans-serif" fontWeight="800" fontSize="56">district</text>
-                  <text x="50%" y="78%" dominantBaseline="middle" textAnchor="middle" fill="#F3E8FF" fontFamily="Helvetica, Arial, sans-serif" fontSize="14">BY ZOMATO</text>
+          <div className="rounded-3xl overflow-hidden shadow-2xl border border-purple-400/20">
+            <div className="bg-gradient-to-br from-purple-800 via-purple-600 to-pink-600 text-white p-12 md:p-16 flex flex-col items-center relative overflow-hidden">
+              {/* Decorative background elements */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl"></div>
+              
+              <div className="mb-6 relative z-10">
+                <svg width="280" height="100" viewBox="0 0 560 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                  <rect width="560" height="200" rx="20" fill="transparent" />
+                  {/* Main District text with capital D */}
+                  <text x="50%" y="42%" dominantBaseline="middle" textAnchor="middle" fill="#FFF" fontFamily="Helvetica, Arial, sans-serif" fontWeight="900" fontSize="72" letterSpacing="2">District</text>
+                  {/* Enlarged BY ZOMATO text */}
+                  <text x="50%" y="72%" dominantBaseline="middle" textAnchor="middle" fill="#F3E8FF" fontFamily="Helvetica, Arial, sans-serif" fontSize="20" fontWeight="600" letterSpacing="4">BY ZOMATO</text>
                 </svg>
               </div>
-                {/* Subtitle only */}
-                <p className="text-md md:text-lg text-purple-100 text-center max-w-2xl">
-                  Enter your starting details and preferences to generate a great day out — dining, movies, activities and events.
-                </p>
+              
+              {/* Enhanced Subtitle */}
+              <p className="text-lg md:text-xl text-purple-50 text-center max-w-3xl font-light leading-relaxed relative z-10">
+                Enter your starting details and preferences to generate a great day out — dining, movies, activities and events.
+              </p>
             </div>
           </div>
         </div>
