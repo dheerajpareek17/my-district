@@ -30,6 +30,24 @@ export default function ResultsPage() {
     setCurrentIndex((prev) => (prev - 1 + itineraries.length) % itineraries.length);
   };
 
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (itineraries.length <= 1) return;
+      
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        handlePrev();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        handleNext();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [itineraries.length, currentIndex]);
+
   useEffect(() => {
     // Read from sessionStorage
     const storedData = sessionStorage.getItem('itineraryResults');
@@ -194,36 +212,59 @@ export default function ResultsPage() {
 
         {/* Itinerary Carousel */}
         <div className="relative">
-          {/* Navigation Buttons */}
-          <div className="flex items-center justify-between mb-6">
-            <button
-              onClick={handlePrev}
-              disabled={itineraries.length <= 1}
-              className="group flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-purple-500/50 transform hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-lg"
-            >
-              <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-              </svg>
-              <span>Previous</span>
-            </button>
+          {/* Previous Button - Left Side */}
+          <button
+            onClick={handlePrev}
+            disabled={itineraries.length <= 1}
+            className="group absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 z-20"
+            title="Previous itinerary (← Arrow Key)"
+          >
+            {/* Outer glow ring */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500 group-disabled:opacity-0"></div>
             
-            {/* Current Page Indicator */}
-            <div className="flex items-center gap-2 px-4 py-2 bg-gray-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg">
-              <span className="text-purple-300 font-semibold">{currentIndex + 1}</span>
-              <span className="text-gray-400">/</span>
-              <span className="text-gray-300 font-semibold">{itineraries.length}</span>
+            {/* Animated ring */}
+            <div className="absolute inset-0 rounded-full border-2 border-purple-500/30 group-hover:border-purple-400/50 group-hover:scale-110 transition-all duration-300 group-disabled:border-gray-600/30"></div>
+            
+            {/* Main button */}
+            <div className="relative w-16 h-16 flex items-center justify-center bg-gradient-to-br from-purple-600 via-purple-700 to-blue-600 hover:from-purple-500 hover:via-purple-600 hover:to-blue-500 text-white rounded-full transition-all duration-300 shadow-2xl group-hover:shadow-purple-500/60 transform group-hover:scale-110 group-disabled:opacity-30 group-disabled:cursor-not-allowed group-disabled:hover:scale-100 backdrop-blur-sm">
+              {/* Inner shimmer effect */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 group-hover:animate-pulse"></div>
+              
+              <svg className="relative z-10 w-8 h-8 group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
             </div>
+          </button>
+
+          {/* Next Button - Right Side */}
+          <button
+            onClick={handleNext}
+            disabled={itineraries.length <= 1}
+            className="group absolute right-0 top-1/2 -translate-y-1/2 translate-x-16 z-20"
+            title="Next itinerary (→ Arrow Key)"
+          >
+            {/* Outer glow ring */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500 group-disabled:opacity-0"></div>
             
-            <button
-              onClick={handleNext}
-              disabled={itineraries.length <= 1}
-              className="group flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-purple-500/50 transform hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-lg"
-            >
-              <span>Next</span>
-              <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+            {/* Animated ring */}
+            <div className="absolute inset-0 rounded-full border-2 border-purple-500/30 group-hover:border-purple-400/50 group-hover:scale-110 transition-all duration-300 group-disabled:border-gray-600/30"></div>
+            
+            {/* Main button */}
+            <div className="relative w-16 h-16 flex items-center justify-center bg-gradient-to-br from-purple-600 via-purple-700 to-blue-600 hover:from-purple-500 hover:via-purple-600 hover:to-blue-500 text-white rounded-full transition-all duration-300 shadow-2xl group-hover:shadow-purple-500/60 transform group-hover:scale-110 group-disabled:opacity-30 group-disabled:cursor-not-allowed group-disabled:hover:scale-100 backdrop-blur-sm">
+              {/* Inner shimmer effect */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 group-hover:animate-pulse"></div>
+              
+              <svg className="relative z-10 w-8 h-8 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
-            </button>
+            </div>
+          </button>
+
+          {/* Current Page Indicator - Top Center */}
+          <div className="flex items-center justify-center gap-2 px-5 py-2 bg-gray-800/50 backdrop-blur-sm border border-purple-500/30 rounded-full mb-6 mx-auto w-fit">
+            <span className="text-purple-300 font-semibold">{currentIndex + 1}</span>
+            <span className="text-gray-400">/</span>
+            <span className="text-gray-300 font-semibold">{itineraries.length}</span>
           </div>
 
           {/* Current Itinerary with Animation */}
