@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "antd": "^6.2.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.563.0",
     "mongoose": "^9.1.5",

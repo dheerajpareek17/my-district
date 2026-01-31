@@ -3,6 +3,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Steps } from 'antd';
+import 'antd/dist/reset.css';
 import BasicInfoStep from '@/app/components/plan/BasicInfoStep';
 import GoOutTypesStep from '@/app/components/plan/GoOutTypesStep';
 
@@ -12,6 +14,7 @@ export default function PlanItinerary() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [formData, setFormData] = useState({
     // Mandatory fields
+    date: '',
     startTime: '',
     budget: '',
     numberOfPeople: '',
@@ -22,10 +25,21 @@ export default function PlanItinerary() {
     endLocation: { lat: '', lng: '' },
     extraInfo: '',
     travelTolerance: [],
+    transportMode: '',
     
     // Preferred types with filters
     preferredTypes: []
   });
+
+  // Check if mandatory fields are filled
+  const isStep1Valid = () => {
+    return formData.date &&
+           formData.startTime &&
+           formData.budget &&
+           formData.numberOfPeople &&
+           formData.startLocation.lat &&
+           formData.startLocation.lng;
+  };
 
   const handleStepComplete = (stepData) => {
     setFormData(prev => ({ ...prev, ...stepData }));
@@ -37,6 +51,7 @@ export default function PlanItinerary() {
     try {
       // Transform formData to API format
       const apiPayload = {
+        date: formData.date,
         startTime: parseInt(formData.startTime),
         budget: parseFloat(formData.budget),
         numberOfPeople: parseInt(formData.numberOfPeople),
@@ -59,6 +74,7 @@ export default function PlanItinerary() {
       if (formData.travelTolerance.length > 0) {
         apiPayload.travelTolerance = formData.travelTolerance;
       }
+      if (formData.transportMode) apiPayload.transportMode = formData.transportMode;
 
       // preferredTypes now contains the new structure with filters or specific venues
       // No need to merge - send as-is
@@ -154,20 +170,45 @@ export default function PlanItinerary() {
         </div>
 
         {/* Progress Indicator */}
-        <div className="flex items-center justify-center mb-8">
-          <div className="flex items-center space-x-4">
-            <div className={`flex items-center justify-center w-10 h-10 rounded-full ${
-              step >= 1 ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'
-            }`}>
-              1
-            </div>
-            <div className={`w-24 h-1 ${step >= 2 ? 'bg-purple-600' : 'bg-gray-200'}`} />
-            <div className={`flex items-center justify-center w-10 h-10 rounded-full ${
-              step >= 2 ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'
-            }`}>
-              2
-            </div>
-          </div>
+        <div className="mb-8">
+          <Steps
+            type="panel"
+            current={step - 1}
+            onChange={(current) => {
+              // Allow going back to Step 1 or forward to Step 2 if validated
+              if (current === 0) {
+                setStep(1);
+              } else if (current === 1 && isStep1Valid()) {
+                setStep(2);
+              }
+            }}
+            items={[
+              {
+                title: 'Step 1',
+                subTitle: 'Basic Information',
+              },
+              {
+                title: 'Step 2',
+                subTitle: 'Go-Out Preferences',
+                disabled: !isStep1Valid(),
+              },
+            ]}
+            styles={{
+              root: {
+                '--ant-color-primary': '#9333ea',
+                '--ant-color-primary-hover': '#a855f7',
+                '--ant-color-primary-bg': 'rgba(147, 51, 234, 0.1)',
+              },
+              itemTitle: {
+                fontWeight: 'bold',
+                color: 'white',
+              },
+              itemSubtitle: {
+                fontWeight: 'bold',
+                color: 'white',
+              }
+            }}
+          />
         </div>
 
         {/* Form Steps */}
